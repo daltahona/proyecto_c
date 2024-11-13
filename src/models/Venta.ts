@@ -65,7 +65,7 @@ Venta.init(
   {
     tableName: "ventas",
     sequelize: database,
-    timestamps: true,
+    timestamps: false,
   }
 );
 

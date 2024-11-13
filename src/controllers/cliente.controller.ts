@@ -1,6 +1,9 @@
 import {  Request, Response } from 'express';
 import { where } from 'sequelize/types';
 import { NextFunction } from 'express';
+import { Venta } from '../models/Venta';
+import { Product_Venta } from '../models/Product_Venta';
+import { Op } from 'sequelize';
 import { Cliente, ClienteI } from '../models/Cliente';
 
 export class ClienteController {
@@ -144,6 +147,41 @@ public async deleteCliente(req: Request, res: Response): Promise<void> {
         return Promise.resolve(); // devuelve un Promise<void>
     }
 }
+
+public async deleteAllClientes(req: Request, res: Response): Promise<void> {
+    try {
+      // Eliminar primero los registros de la tabla product_venta que hacen referencia a las ventas
+      await Product_Venta.destroy({
+        where: {
+          venta_id: {
+            [Op.ne]: null
+          }
+        }
+      });
+  
+      // Eliminar los registros de la tabla ventas que hacen referencia a la tabla clientes
+      await Venta.destroy({
+        where: {
+          clientes_id: {
+            [Op.ne]: null
+          }
+        }
+      });
+  
+      // Luego eliminar los registros de la tabla clientes
+      await Cliente.destroy({
+        where: {},
+        truncate: false, // Esto es importante para evitar el error de clave foránea
+      });
+  
+      res.status(200).json({ msg: "Todos los clientes eliminados" });
+    } catch (error) {
+      console.error('Error al eliminar todos los clientes:', error);
+      res.status(500).json({ msg: "Error interno" });
+    }
+  }
+  
+
 
 // Ocultar un cliente (eliminación avanzada)
 async hideCliente(req: Request, res: Response): Promise<void> {

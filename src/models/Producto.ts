@@ -65,7 +65,7 @@ Producto.init(
   {
     tableName: "productos",
     sequelize: database,
-    timestamps: true,
+    timestamps: false,
   }
 );
 

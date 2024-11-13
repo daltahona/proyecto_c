@@ -32,6 +32,6 @@ Tipo_Producto.init(
   {
     tableName: "tipo_productos",
     sequelize: database,
-    timestamps: true
+    timestamps: false
   }
 );
